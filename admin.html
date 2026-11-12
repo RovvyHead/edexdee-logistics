@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edexdee Logistics | Admin Panel</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+
+    <style>
+        :root {
+            --primary: #0a2540;
+            --accent: #ff6b00;
+            --light: #f8f9fa;
+            --dark: #1a1a1a;
+            --border: #cccccc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            padding: 40px 20px;
+        }
+
+        .admin-card {
+            max-width: 550px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: none; /* Hidden until authorized */
+        }
+
+        .admin-card h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            font-size: 0.95rem;
+            outline: none;
+        }
+
+        .form-group textarea {
+            height: 90px;
+            resize: vertical;
+        }
+
+        button {
+            width: 100%;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: bold;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: #e05e00;
+        }
+
+        #statusAlert {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+            display: none;
+            font-weight: bold;
+        }
+
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+
+        .denied-screen {
+            text-align: center;
+            margin-top: 100px;
+            color: #721c24;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="denied-screen" id="deniedScreen">
+        <h2>🔒 Access Denied</h2>
+        <p>You must provide a valid passcode to manage Edexdee Logistics shipments.</p>
+    </div>
+
+    <div class="admin-card" id="adminCard">
+        <h2>📦 Edexdee Admin - Add Shipment</h2>
+        <form id="shipmentForm">
+            <div class="form-group">
+                <label>Tracking ID</label>
+                <input type="text" id="trackingId" placeholder="e.g. EDX-99001-NG" required>
+            </div>
+
+            <div class="form-group">
+                <label>Sender Name</label>
+                <input type="text" id="senderName" placeholder="e.g. John Doe" required>
+            </div>
+
+            <div class="form-group">
+                <label>Receiver Information (Name / Phone / Address)</label>
+                <input type="text" id="receiverInfo" placeholder="e.g. Jane Smith - +234 801 234 5678, Lekki Phase 1" required>
+            </div>
+
+            <div class="form-group">
+                <label>Status</label>
+                <select id="status">
+                    <option value="In Transit">In Transit</option>
+                    <option value="Out for Delivery">Out for Delivery</option>
+                    <option value="Customs Hold">Customs Hold</option>
+                    <option value="Delivered">Delivered</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Current Location</label>
+                <input type="text" id="currentLocation" placeholder="e.g. Frankfurt Hub, Germany" required>
+            </div>
+
+            <div class="form-group">
+                <label>Destination</label>
+                <input type="text" id="destination" placeholder="e.g. Lagos, Nigeria" required>
+            </div>
+
+            <div class="form-group">
+                <label>Estimated Delivery Date</label>
+                <input type="text" id="estDelivery" placeholder="e.g. Sep 18, 2026" required>
+            </div>
+
+            <div class="form-group">
+                <label>History Log (Format: Title | Location | Time)</label>
+                <textarea id="historyLog" placeholder="Departed Sorting Hub | London, UK | 04 Sep 2026, 10:00&#10;Customs Cleared | Heathrow | 03 Sep 2026, 18:30"></textarea>
+            </div>
+
+            <button type="submit">Save Shipment</button>
+        </form>
+
+        <div id="statusAlert"></div>
+    </div>
+
+    <script>
+        // --- ADMIN SECURITY PIN ---
+        const ADMIN_PIN = "EDX-2026-SECURE";
+
+        const userPasscode = prompt("Enter Edexdee Admin Security Passcode:");
+
+        if (userPasscode === ADMIN_PIN) {
+            document.getElementById('adminCard').style.display = 'block';
+        } else {
+            document.getElementById('deniedScreen').style.display = 'block';
+            alert("Incorrect passcode! Access restricted.");
+        }
+
+        // --- SUPABASE CREDENTIALS ---
+        const SUPABASE_URL = 'https://oymmrsvzozlxccwatzyb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95bW1yc3Z6b3pseGNjd2F0enliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MDYzNTMsImV4cCI6MjEwNDE4MjM1M30.7vrEKcD4dttPaoHbr23ijSURH9lKbFACHEmoUrgp2Ls';
+        
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        document.getElementById('shipmentForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+
+            const alertBox = document.getElementById('statusAlert');
+            alertBox.style.display = 'none';
+
+            const historyText = document.getElementById('historyLog').value.trim();
+            const historyArray = historyText ? historyText.split('\n').map(line => {
+                const parts = line.split('|');
+                return {
+                    title: parts[0] ? parts[0].trim() : 'Update',
+                    location: parts[1] ? parts[1].trim() : 'In Transit',
+                    time: parts[2] ? parts[2].trim() : new Date().toLocaleString()
+                };
+            }) : [];
+
+            const shipmentData = {
+                tracking_id: document.getElementById('trackingId').value.trim().toUpperCase(),
+                sender_name: document.getElementById('senderName').value.trim(),
+                receiver_info: document.getElementById('receiverInfo').value.trim(),
+                status: document.getElementById('status').value,
+                current_location: document.getElementById('currentLocation').value.trim(),
+                destination: document.getElementById('destination').value.trim(),
+                est_delivery: document.getElementById('estDelivery').value.trim(),
+                history_json: historyArray
+            };
+
+            const { error } = await supabaseClient
+                .from('shipments')
+                .upsert([shipmentData]);
+
+            if (error) {
+                alertBox.className = 'error';
+                alertBox.innerText = 'Error: ' + error.message;
+            } else {
+                alertBox.className = 'success';
+                alertBox.innerText = 'Shipment saved successfully!';
+                document.getElementById('shipmentForm').reset();
+            }
+            alertBox.style.display = 'block';
+        });
+    </script>
+
+</body>
+</html>

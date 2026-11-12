@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edexdee Logistics | Global Freight & Courier Services</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    
+    <!-- Supabase JS Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+    <style>
+        :root {
+            --bg-dark: #0f172a;
+            --card-bg: #1e293b;
+            --accent-blue: #2563eb;
+            --accent-glow: #3b82f6;
+            --orange: #f59e0b;
+            --text-light: #f8fafc;
+            --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header Navigation */
+        header {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: 0.3s;
+        }
+
+        nav a:hover {
+            color: var(--accent-glow);
+        }
+
+        .btn-quote {
+            background: var(--accent-blue);
+            color: #ffffff !important;
+            padding: 10px 20px;
+            border-radius: 6px;
+            transition: 0.3s ease;
+            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+        }
+
+        .btn-quote:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 80px 5% 60px;
+            text-align: center;
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 15px;
+            background: linear-gradient(180deg, #ffffff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            max-width: 650px;
+            margin: 0 auto 40px;
+        }
+
+        .tracking-box-hero {
+            max-width: 600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 10px;
+            background: var(--card-bg);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        }
+
+        .tracking-box-hero input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            padding: 12px 16px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .tracking-box-hero button {
+            background: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .tracking-box-hero button:hover {
+            background: #1d4ed8;
+        }
+
+        /* Tracking Dynamic Output Container */
+        #trackingResult {
+            max-width: 600px;
+            margin: 25px auto 0;
+            text-align: left;
+        }
+
+        .result-card {
+            background: #ffffff;
+            color: #1e293b;
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.4);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+            margin-bottom: 15px;
+        }
+
+        .result-header h3 {
+            color: #0f172a;
+            font-size: 1.15rem;
+        }
+
+        .status-badge {
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+        }
+
+        .grid-info {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .info-item label {
+            display: block;
+            font-size: 0.75rem;
+            color: #64748b;
+            text-transform: uppercase;
+            font-weight: 700;
+        }
+
+        .info-item span {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #0f172a;
+        }
+
+        .history-box {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.88rem;
+            color: #334155;
+            white-space: pre-wrap;
+        }
+
+        .error-card {
+            background: #fef2f2;
+            border: 1px solid #fca5a5;
+            color: #991b1b;
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* About Us Section */
+        .about-section {
+            padding: 90px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-text h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: #ffffff;
+        }
+
+        .about-text p {
+            color: var(--text-muted);
+            margin-bottom: 15px;
+            font-size: 1rem;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border-color);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 380px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Services Floating Section */
+        .services-section {
+            padding: 90px 5%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-header h2 {
+            font-size: 2.2rem;
+            color: #ffffff;
+        }
+
+        .section-header p {
+            color: var(--text-muted);
+            font-size: 1rem;
+            max-width: 600px;
+            margin: 10px auto 0;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border-color);
+            transition: all 0.4s ease;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Floating Animation Effect */
+        .service-card:hover {
+            transform: translateY(-12px);
+            box-shadow: 0 20px 30px -10px rgba(37, 99, 235, 0.3);
+            border-color: var(--accent-glow);
+        }
+
+        .card-image {
+            width: 100%;
+            height: 180px;
+            overflow: hidden;
+        }
+
+        .card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s ease;
+        }
+
+        .service-card:hover .card-image img {
+            transform: scale(1.08);
+        }
+
+        .card-content {
+            padding: 25px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-content h3 {
+            font-size: 1.25rem;
+            margin-bottom: 12px;
+            color: #ffffff;
+        }
+
+        .card-content p {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .card-content a {
+            color: var(--accent-glow);
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: gap 0.2s;
+        }
+
+        .card-content a:hover {
+            gap: 10px;
+        }
+
+        /* Footer */
+        footer {
+            background: #0b0f19;
+            padding: 40px 5%;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 850px) {
+            .about-section {
+                grid-template-columns: 1fr;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="index.html" class="brand-logo">
+            <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 5 L90 25 V75 L50 95 L10 75 V25 Z" fill="#0B1220"/>
+                <path d="M50 22 L75 35 L50 48 L25 35 Z" fill="#2563EB"/>
+                <path d="M25 38 L48 50 V75 L25 62 Z" fill="#1D4ED8"/>
+                <path d="M52 50 L75 38 V62 L52 75 Z" fill="#F59E0B"/>
+            </svg>
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 1.2rem; font-weight: 800; color: #ffffff; line-height: 1;">EDEXDEE</span>
+                <span style="font-size: 0.65rem; font-weight: 700; color: #2563EB; letter-spacing: 2px;">LOGISTICS</span>
+            </div>
+        </a>
+        <nav>
+            <ul>
+                <li><a href="index.html">Home</a></li>
+                <li><a href="#about">About Us</a></li>
+                <li><a href="#services">Services</a></li>
+                <li><a href="#tracking">Track Shipment</a></li>
+                <li><a href="quote.html" class="btn-quote">Get a Quote</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Delivering Excellence Across Borders</h1>
+        <p>Real-time express cargo, air freight, and global courier dispatch powered by seamless technology.</p>
+        
+        <div class="tracking-box-hero" id="tracking">
+            <input type="text" id="trackingInput" placeholder="Enter tracking number (e.g., EDX-99001-NG)">
+            <button id="trackBtn" onclick="trackPackage()">Track Cargo</button>
+        </div>
+
+        <!-- Dynamic Output Container for Tracking Data -->
+        <div id="trackingResult"></div>
+    </section>
+
+    <!-- About Us Section -->
+    <section class="about-section" id="about">
+        <div class="about-text">
+            <h2>About Edexdee Logistics</h2>
+            <p>Founded to simplify cross-border freight and domestic express delivery, Edexdee Logistics provides end-to-end supply chain infrastructure for individuals and corporate enterprises.</p>
+            <p>Combining automated database tracking with specialized air, sea, and land networks, we guarantee transparent timeline updates from initial pickup to final destination delivery.</p>
+        </div>
+        <div class="about-image">
+            <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1000&q=80" alt="Global Shipping Hub">
+        </div>
+    </section>
+
+    <!-- Floating Services Cards with Real Logistics Images -->
+    <section class="services-section" id="services">
+        <div class="section-header">
+            <h2>Everything You Need to Move What Matters</h2>
+            <p>From priority document dispatches to heavy commercial container handling.</p>
+        </div>
+
+        <div class="services-grid">
+            <!-- Express Delivery -->
+            <div class="service-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1616401784845-180882ba9ba8?auto=format&fit=crop&w=600&q=80" alt="Express Delivery Van">
+                </div>
+                <div class="card-content">
+                    <h3>Express Courier</h3>
+                    <p>Fast, prioritized dispatch for urgent packages, high-value electronics, and commercial documents.</p>
+                    <a href="quote.html">Request Express &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Same-Day Delivery -->
+            <div class="service-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1580674684081-7617fbf3d745?auto=format&fit=crop&w=600&q=80" alt="Same Day Delivery Motorbike">
+                </div>
+                <div class="card-content">
+                    <h3>Same-Day Local</h3>
+                    <p>Rapid intra-city courier solutions ensuring your immediate citywide orders arrive within hours.</p>
+                    <a href="quote.html">Book Local Runner &rarr;</a>
+                </div>
+            </div>
+
+            <!-- International Freight -->
+            <div class="service-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=600&q=80" alt="International Cargo Ship">
+                </div>
+                <div class="card-content">
+                    <h3>International Air & Sea</h3>
+                    <p>Global ocean container shipping and air cargo logistics with automated customs clearance guidance.</p>
+                    <a href="quote.html">Calculate Freight &rarr;</a>
+                </div>
+            </div>
+
+            <!-- Enterprise Warehousing -->
+            <div class="service-card">
+                <div class="card-image">
+                    <img src="https://images.unsplash.com/photo-1553413077-190dd305871c?auto=format&fit=crop&w=600&q=80" alt="Logistics Warehouse">
+                </div>
+                <div class="card-content">
+                    <h3>Warehousing & Supply</h3>
+                    <p>Secure inventory storage, order fulfillment, and e-commerce distribution services.</p>
+                    <a href="quote.html">Partner With Us &rarr;</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        &copy; 2026 Edexdee Logistics. All rights reserved.
+    </footer>
+
+    <!-- Google Translate Integration -->
+    <div id="google_translate_element" style="display:none;"></div>
+    <script type="text/javascript">
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({ pageLanguage: 'en', autoDisplay: true }, 'google_translate_element');
+      const userLang = navigator.language || navigator.userLanguage; 
+      if (userLang && !userLang.startsWith('en')) {
+        setTimeout(() => {
+          const select = document.querySelector('select.goog-te-combo');
+          if (select) {
+            select.value = userLang.split('-')[0];
+            select.dispatchEvent(new Event('change'));
+          }
+        }, 1000);
+      }
+    }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <!-- Supabase Live Tracking Script -->
+    <script>
+        // Supabase configuration
+        const SUPABASE_URL = 'https://oymmrsvzozlxccwatzyb.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im95bW1yc3Z6b3pseGNjd2F0enliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODg2MDYzNTMsImV4cCI6MjEwNDE4MjM1M30.7vrEKcD4dttPaoHbr23ijSURH9lKbFACHEmoUrgp2Ls';
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        async function trackPackage() {
+            const input = document.getElementById('trackingInput').value.trim();
+            const resultContainer = document.getElementById('trackingResult');
+            const trackBtn = document.getElementById('trackBtn');
+
+            if (!input) {
+                alert('Please enter a valid tracking ID.');
+                return;
+            }
+
+            trackBtn.innerText = 'Searching...';
+            trackBtn.disabled = true;
+
+            try {
+                // Query shipment from Supabase matching tracking_id
+                const { data, error } = await supabaseClient
+                    .from('shipments')
+                    .select('*')
+                    .eq('tracking_id', input.toUpperCase())
+                    .single();
+
+                if (error || !data) {
+                    resultContainer.innerHTML = `
+                        <div class="error-card">
+                            ❌ No shipment record found for ID: <strong>${input}</strong>
+                        </div>
+                    `;
+                } else {
+                    const estDeliveryDate = data.est_delivery || data.estimated_delivery || 'Pending';
+                    
+                    let historyText = 'No history updates logged.';
+                    if (Array.isArray(data.history_json) && data.history_json.length > 0) {
+                        historyText = data.history_json.map(item => `${item.title} | ${item.location} | ${item.time}`).join('\n');
+                    } else if (data.history_log) {
+                        historyText = data.history_log;
+                    }
+
+                    resultContainer.innerHTML = `
+                        <div class="result-card">
+                            <div class="result-header">
+                                <h3>📦 Waybill: ${data.tracking_id}</h3>
+                                <span class="status-badge">${data.status || 'In Transit'}</span>
+                            </div>
+                            <div class="grid-info">
+                                <div class="info-item">
+                                    <label>Sender Name</label>
+                                    <span>${data.sender_name || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Receiver Information</label>
+                                    <span>${data.receiver_info || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Current Location</label>
+                                    <span>${data.current_location || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Destination</label>
+                                    <span>${data.destination || 'N/A'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Estimated Delivery</label>
+                                    <span>${estDeliveryDate}</span>
+                                </div>
+                                <div class="info-item">
+                                    <label>Last Updated</label>
+                                    <span>${data.created_at ? new Date(data.created_at).toLocaleDateString() : 'Today'}</span>
+                                </div>
+                            </div>
+                            <div>
+                                <label style="display:block; font-size: 0.75rem; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 6px;">
+                                    Activity & History Log
+                                </label>
+                                <div class="history-box">${historyText}</div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (err) {
+                resultContainer.innerHTML = `
+                    <div class="error-card">
+                        ⚠️ Network connection failed. Please try again.
+                    </div>
+                `;
+            } finally {
+                trackBtn.innerText = 'Track Cargo';
+                trackBtn.disabled = false;
+            }
+        }
+    </script>
+
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/6a9e9a6501ac02344ed3cdee/1k1tom8d2';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+    })();
+    </script>
+    <!--End of Tawk.to Script-->
+</body>
+</html>

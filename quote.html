@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get a Shipping Quote | Edexdee Logistics</title>
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg">
+    
+    <style>
+        :root {
+            --primary: #0b1220;
+            --accent: #2563eb;
+            --orange: #f59e0b;
+            --light: #f8fafc;
+            --dark: #1e293b;
+            --border: #e2e8f0;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Navigation Header */
+        header {
+            background-color: var(--primary);
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            margin-left: 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover {
+            color: var(--orange);
+        }
+
+        /* Hero Banner */
+        .page-hero {
+            background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%);
+            color: white;
+            padding: 60px 5%;
+            text-align: center;
+        }
+
+        .page-hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .page-hero p {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Container Layout */
+        .container {
+            max-width: 1100px;
+            margin: -40px auto 60px;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        @media (max-width: 850px) {
+            .container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            border: 1px solid var(--border);
+        }
+
+        .card-header {
+            margin-bottom: 25px;
+            border-bottom: 2px solid var(--light);
+            padding-bottom: 15px;
+        }
+
+        .card-header h2 {
+            color: var(--primary);
+            font-size: 1.5rem;
+        }
+
+        /* Form Controls */
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            font-size: 0.85rem;
+            color: #475569;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            border-color: var(--accent);
+        }
+
+        /* Estimator Output Box */
+        .estimate-display {
+            background: #eff6ff;
+            border: 2px dashed var(--accent);
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .estimate-price {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: var(--accent);
+            margin: 5px 0;
+        }
+
+        .estimate-note {
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+
+        .btn-submit {
+            width: 100%;
+            background: var(--accent);
+            color: #ffffff;
+            border: none;
+            padding: 14px;
+            font-size: 1rem;
+            font-weight: 700;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-submit:hover {
+            background: #1d4ed8;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--primary);
+            color: #94a3b8;
+            text-align: center;
+            padding: 30px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="index.html" class="brand-logo">
+            <svg width="36" height="36" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M50 5 L90 25 V75 L50 95 L10 75 V25 Z" fill="#0B1220"/>
+                <path d="M50 22 L75 35 L50 48 L25 35 Z" fill="#2563EB"/>
+                <path d="M25 38 L48 50 V75 L25 62 Z" fill="#1D4ED8"/>
+                <path d="M52 50 L75 38 V62 L52 75 Z" fill="#F59E0B"/>
+            </svg>
+            <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 1.2rem; font-weight: 800; color: #ffffff; line-height: 1;">EDEXDEE</span>
+                <span style="font-size: 0.65rem; font-weight: 700; color: #2563EB; letter-spacing: 2px;">LOGISTICS</span>
+            </div>
+        </a>
+        <nav>
+            <a href="index.html">Track Shipment</a>
+            <a href="quote.html" style="color: var(--orange);">Get a Quote</a>
+            <a href="admin.html">Admin</a>
+        </nav>
+    </header>
+
+    <!-- Page Hero Banner -->
+    <section class="page-hero">
+        <h1>Calculate & Request Shipping Quotes</h1>
+        <p>Get instant estimates and submit formal shipping requests across global air, sea, and land freight channels.</p>
+    </section>
+
+    <!-- Content Grid -->
+    <div class="container">
+        
+        <!-- Interactive Rate Estimator -->
+        <div class="card">
+            <div class="card-header">
+                <h2>⚡ Instant Rate Estimator</h2>
+            </div>
+            
+            <div class="form-group">
+                <label>Freight Mode</label>
+                <select id="estMode" onchange="calculateEstimate()">
+                    <option value="air">Air Freight (Express - 3-5 Days)</option>
+                    <option value="sea">Ocean Freight (Economy - 20-30 Days)</option>
+                    <option value="land">Road Express (Regional - 2-7 Days)</option>
+                </select>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Weight (kg)</label>
+                    <input type="number" id="estWeight" value="10" min="1" oninput="calculateEstimate()">
+                </div>
+                <div class="form-group">
+                    <label>Volume (m³)</label>
+                    <input type="number" id="estVolume" value="0.2" step="0.1" min="0.1" oninput="calculateEstimate()">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label>Insurance Option</label>
+                <select id="estInsurance" onchange="calculateEstimate()">
+                    <option value="0">Standard Protection (Included)</option>
+                    <option value="25">Full Cargo Guarantee (+$25.00)</option>
+                </select>
+            </div>
+
+            <div class="estimate-display">
+                <div>Estimated Shipping Cost</div>
+                <div class="estimate-price" id="priceDisplay">$125.00</div>
+                <div class="estimate-note">*Final price confirmed upon cargo inspection.</div>
+            </div>
+        </div>
+
+        <!-- Formal Quote Request Form -->
+        <div class="card">
+            <div class="card-header">
+                <h2>📋 Submit Formal Request</h2>
+            </div>
+            
+            <form id="quoteForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Your Name</label>
+                        <input type="text" placeholder="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" placeholder="john@example.com" required>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Origin City / Country</label>
+                        <input type="text" placeholder="e.g. London, UK" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Destination City / Country</label>
+                        <input type="text" placeholder="e.g. Lagos, Nigeria" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Cargo Description & Special Instructions</label>
+                    <textarea rows="3" placeholder="Describe items, dimensions, packaging type, or custom clearing requests..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Submit Quote Request</button>
+            </form>
+        </div>
+
+    </div>
+
+    <footer>
+        &copy; 2026 Edexdee Logistics. All rights reserved.
+    </footer>
+
+    <script>
+        function calculateEstimate() {
+            const mode = document.getElementById('estMode').value;
+            const weight = parseFloat(document.getElementById('estWeight').value) || 0;
+            const volume = parseFloat(document.getElementById('estVolume').value) || 0;
+            const insurance = parseFloat(document.getElementById('estInsurance').value) || 0;
+
+            let ratePerKg = 8.5;  // Default Air
+            let ratePerVol = 15;
+
+            if (mode === 'sea') {
+                ratePerKg = 2.0;
+                ratePerVol = 85.0;
+            } else if (mode === 'land') {
+                ratePerKg = 4.0;
+                ratePerVol = 30.0;
+            }
+
+            const total = (weight * ratePerKg) + (volume * ratePerVol) + insurance;
+            document.getElementById('priceDisplay').innerText = '$' + total.toFixed(2);
+        }
+
+        document.getElementById('quoteForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you! Your quote request has been submitted. An Edexdee Logistics representative will contact you via email shortly.');
+            this.reset();
+        });
+    </script>
+    <!-- Automatic Google Translate Script -->
+<div id="google_translate_element" style="display:none;"></div>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: true
+  }, 'google_translate_element');
+  
+  // Auto-trigger translation based on browser preferred language
+  const userLang = navigator.language || navigator.userLanguage; 
+  if (userLang && !userLang.startsWith('en')) {
+    setTimeout(() => {
+      const select = document.querySelector('select.goog-te-combo');
+      if (select) {
+        select.value = userLang.split('-')[0];
+        select.dispatchEvent(new Event('change'));
+      }
+    }, 1000);
+  }
+}
+</script>
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<!--Start of Tawk.to Script-->
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/6a9e9a6501ac02344ed3cdee/1k1tom8d2';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+</script>
+<!--End of Tawk.to Script-->
+</body>
+</html>
